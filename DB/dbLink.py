@@ -1,6 +1,5 @@
 # -*-coding:Latin-1 -*
 
-import os
 import DB.dbids as dbids
 import mysql.connector as mariadb
 
@@ -34,6 +33,3 @@ def DBTest():
 
     for Nom in result:
         print(Nom)
-
-
-os.system("pause")
