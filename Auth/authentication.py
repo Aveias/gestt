@@ -10,33 +10,36 @@ import hashlib
 import os
 import mysql.connector as mariadb
 
-#TODO : Récupérer les identifiants depuis un form dans une interface graphique
-input_id = input("Entrer votre identifiant : ")
-input_psswd = getpass("Entrer votre mot de passe : ")
-input_psswd = hashlib.md5(input_psswd.encode())
+class Auth():
+    """Classe permettant l'authentification des utilisateurs"""
+    access = False
 
-#On définit les champs à récupérer en BDD comme vides
-user_iD = None
-user_psswd = None
+    def __init__(self):
+        #TODO : Récupérer les identifiants depuis un form dans une interface graphique
+        self.input_id = input("Entrer votre identifiant : ")
+        self.input_psswd = getpass("Entrer votre mot de passe : ")
+        self.input_psswd = hashlib.md5(self.input_psswd.encode())
+        self.grantAccess()
 
-#On va récupérer les infos en BDD
-quer = "SELECT Nom FROM utilisateur"
-link = dbo.DBLink()
-result = link.query("SELECT Nom, MdP FROM utilisateur WHERE Identifiant = %s", [input_id, ])
+    def grantAccess(self):
+        """Authentification de l'utilisateur """
+        #On définit les champs à récupérer en BDD comme vides
+        user_iD = None
+        user_psswd = None
 
-for Nom, MdP in result:
-    user_iD = Nom
-    user_psswd = MdP
+        #On va récupérer les infos en BDD
+        quer = "SELECT Nom FROM utilisateur"
+        link = dbo.DBLink()
+        result = link.query("SELECT Nom, MdP FROM utilisateur WHERE Identifiant = %s", [self.input_id, ])
 
-#Si l'user ID a été trouvé
-#On compare le mot de passe entré à celui récupéré en BDD
-#TODO : Définir l'autorisation de la connexion. Un fichier "auth" ? Une variable globale ?
-if user_iD != None:
-    if input_psswd.hexdigest() == user_psswd:
-        print("Accès autorisé")
-    else:
-        print("Le mot de passe est invalide")
-else:
-    print("Cet utilisateur n'existe pas")
+        for Nom, MdP in result:
+            user_iD = Nom
+            user_psswd = MdP
 
-os.system("pause")
+        #Si l'user ID a été trouvé
+        #On compare le mot de passe entré à celui récupéré en BDD, si ça matche, on renvoie True
+        if user_iD != None:
+            if self.input_psswd.hexdigest() == user_psswd:
+                Auth.access = True
+
+        return Auth.access
