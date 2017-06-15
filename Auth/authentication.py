@@ -7,17 +7,16 @@ Permet son accès au logiciel ou non
 import DB.dbLink as dbo
 from getpass import getpass
 import hashlib
-import os
 import mysql.connector as mariadb
 
 class Auth():
     """Classe permettant l'authentification des utilisateurs"""
     access = False
 
-    def __init__(self):
+    def __init__(self, inputid,inputmdp):
         #TODO : Récupérer les identifiants depuis un form dans une interface graphique
-        self.input_id = input("Entrer votre identifiant : ")
-        self.input_psswd = getpass("Entrer votre mot de passe : ")
+        self.input_id = inputid
+        self.input_psswd = inputmdp
         self.input_psswd = hashlib.md5(self.input_psswd.encode())
         self.grantAccess()
 
@@ -41,5 +40,9 @@ class Auth():
         if user_iD != None:
             if self.input_psswd.hexdigest() == user_psswd:
                 Auth.access = True
+                print("Accès autorisé")
+            print("Accès refusé")
+        else:
+            print("Accès refusé")
 
         return Auth.access
