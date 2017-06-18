@@ -1,8 +1,8 @@
-# -*-coding:Latin-1 -*
+# -*-coding:utf8 -*
 
-from tkinter import *
 import Auth.authentication as auth
 import Auth.login as log
+import Users.Model as U
 import os
 
 #On appelle le module d'identification
@@ -12,4 +12,7 @@ login.fenetre.mainloop()
 #On lance le programme
 while auth.Auth.access == True:
     print("programme en cours")
+    user = U.User('test')
+    print(user.nom)
+    print(user.prenom)
     os.system("pause")

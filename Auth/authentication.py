@@ -1,7 +1,7 @@
-# -*-coding:Latin-1 -*
+# -*-coding:utf8 -*
 """
 Module permettant d'authentifier un utilisateur
-Permet son accès au logiciel ou non
+Permet son accÃ¨s au logiciel ou non
 """
 
 import DB.dbLink as dbo
@@ -14,7 +14,8 @@ class Auth():
     access = False
 
     def __init__(self, inputid,inputmdp):
-        #TODO : Récupérer les identifiants depuis un form dans une interface graphique
+        #TODO : RÃ©cupÃ©rer les identifiants depuis un form dans une interface graphique
+
         self.input_id = inputid
         self.input_psswd = inputmdp
         self.input_psswd = hashlib.md5(self.input_psswd.encode())
@@ -22,11 +23,11 @@ class Auth():
 
     def grantAccess(self):
         """Authentification de l'utilisateur """
-        #On définit les champs à récupérer en BDD comme vides
+        #On dÃ©finit les champs Ã  rÃ©cupÃ©rer en BDD comme vides
         user_iD = None
         user_psswd = None
 
-        #On va récupérer les infos en BDD
+        #On va rÃ©cupÃ©rer les infos en BDD
         quer = "SELECT Nom FROM utilisateur"
         link = dbo.DBLink()
         result = link.query("SELECT Nom, MdP FROM utilisateur WHERE Identifiant = %s", [self.input_id, ])
@@ -35,14 +36,15 @@ class Auth():
             user_iD = Nom
             user_psswd = MdP
 
-        #Si l'user ID a été trouvé
-        #On compare le mot de passe entré à celui récupéré en BDD, si ça matche, on renvoie True
+        #Si l'user ID a Ã©tÃ© trouvÃ©
+        #On compare le mot de passe entrÃ© Ã  celui rÃ©cupÃ©rÃ© en BDD, si Ã§a matche, on renvoie True
         if user_iD != None:
             if self.input_psswd.hexdigest() == user_psswd:
                 Auth.access = True
-                print("Accès autorisé")
-            print("Accès refusé")
+                print("AccÃ¨s autorisÃ©")
+            else:
+                print("AccÃ¨s refusÃ© : Le mot de passe est incorrect")
         else:
-            print("Accès refusé")
+            print("AccÃ¨s refusÃ© : cet utilisateur n'existe pas")
 
         return Auth.access
