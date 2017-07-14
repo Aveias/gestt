@@ -13,6 +13,5 @@ login.fenetre.mainloop()
 while auth.Auth.access == True:
     print("programme en cours")
     user = U.User('test')
-    print(user.nom)
-    print(user.prenom)
+    print("Bonjour", user.nom, user.prenom, "vous êtes dans la boucle")
     os.system("pause")
