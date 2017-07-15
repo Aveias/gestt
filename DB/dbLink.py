@@ -5,7 +5,7 @@ import mysql.connector as mariadb
 
 
 class DBLink:
-    """Classe permettant de faire une requete à la base de données"""
+    """Classe permettant de faire des requetes à la base de données"""
 
     _db_connection = None
     _db_cur = None
@@ -16,13 +16,28 @@ class DBLink:
         self._db_connection = mariadb.connect(host = db_ids["host"], user = db_ids["user"], password = db_ids["password"], database = db_ids["database"])
         self._db_cur = self._db_connection.cursor()
 
-    #Query standard
     def query(self, query, args):
-        self._db_cur.execute(query, args)
+        """query standard"""
+        try:
+            self._db_cur.execute(query, args)
+        except mariadb.Error as e:
+            self._db_cur = False
+            print("Erreur : ", e)
         return self._db_cur
 
-    #on ferme la connexion
+    def commit(self, query, args):
+        """ajout d'un élément en bdd standard"""
+        try:
+            self._db_cur.execute(query, args)
+            self._db_connection.commit()
+            message = "Element ajouté"
+        except mariadb.Error as e:
+            message = "Erreur"
+            print("Erreur : ", e)
+        return message
+
     def __del__(self):
+        """fermeture de la connexion"""
         self._db_connection.close()
 
 def DBTest():
