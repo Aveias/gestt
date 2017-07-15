@@ -8,6 +8,7 @@ class User:
     def __init__(self, id):
         """Constructeur créant utilisateur à partir d'un ID"""
         self.identifiant = id
+        self.roles = list();
 
         #On va chercher l'user en base de données
         link = db.DBLink()
@@ -29,6 +30,9 @@ class User:
             self._mdp = mdp
             self.cout = cout
             self.id_fonc = id_fonc
+
+        #Récupération de la liste des roles
+        self.getRoles()
 
 
     def hydrate(self, nom, prenom, identifiant, mdp, cout, idfonc, fonction, pole):
@@ -60,8 +64,27 @@ class User:
         link.commit(query, [self.nom, self.prenom, self.identifiant, self._mdp, self.id_fonc, self.cout, self._id_table])
 
     def delete(self):
-        """supprimer un utilisateur"""
-        
+        """supprimer l'utilisateur courant"""
+        link = db.DBLink()
+        query = "DELETE \
+                FROM utilisateur \
+                WHERE IDUtil = %s"
+        link.commit(query, [self._id_table, ])
+
+        query = "DELETE \
+                FROM roleattribution \
+                WHERE IDUtil = %s"
+        link.commit(query, [self._id_table, ])
+
 
     def getRoles(self):
         """liste des roles de l'utilisateur"""
+        link = db.DBLink()
+        query = "SELECT a.IDRole AS id_role, r.Libellé AS role \
+                FROM roleattribution AS a \
+                JOIN role AS r ON a.IDRole = r.IDRole \
+                WHERE a.IDUtil = %s"
+        result = link.query(query, [self._id_table, ])
+
+        for id_role, role in result:
+            self.roles.append((id_role, role))
