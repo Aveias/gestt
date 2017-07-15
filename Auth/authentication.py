@@ -5,7 +5,6 @@ Permet son accès au logiciel ou non
 """
 
 import DB.dbLink as dbo
-import Users.Model as U
 from getpass import getpass
 import hashlib
 import mysql.connector as mariadb
@@ -15,7 +14,6 @@ class Auth():
     access = False
 
     def __init__(self, inputid,inputmdp):
-        #TODO : Récupérer les identifiants depuis un form dans une interface graphique
 
         self.input_id = inputid
         self.input_psswd = inputmdp
@@ -42,7 +40,7 @@ class Auth():
         if user_id != None:
             if self.input_psswd.hexdigest() == user_psswd:
                 Auth.access = True
-                Auth.current_user = U.User(user_id)
+                Auth.current_user = user_id
                 print("Accès autorisé")
             else:
                 print("Accès refusé : Le mot de passe est incorrect")
