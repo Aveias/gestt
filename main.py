@@ -3,11 +3,15 @@
 import Auth.authentication as auth
 import Auth.login as log
 import Users.Model as U
+import Menu.barreOutils as barre
 import os
 
 #On appelle le module d'identification - Commenté pour les pahses de test d'autres modules
 login = log.Login()
 login.fenetre.mainloop()
+
+barreOutils = barre.BarreOutils()
+barreOutils.fenetre.mainloop()
 
 #On lance le programme
 while auth.Auth.access == True:
