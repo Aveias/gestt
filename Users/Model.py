@@ -13,7 +13,7 @@ class User:
             self._id_table = id
             #On va chercher l'user en base de données
             link = db.DBLink()
-            query = "SELECT u.IDUtil AS id_bdd, u.Nom AS nom, u.Prénom AS prenom, u.Identifiant AS identifiant, u.MdP AS mdp, u.SalaireBrut AS cout, u.IDFonc AS id_fonc, f.Intitulé AS fonction, p.Libelle AS pole \
+            query = "SELECT u.IDUtil AS id_bdd, u.Nom AS bdd_nom, u.Prénom AS bdd_prenom, u.Identifiant AS bdd_identifiant, u.MdP AS bdd_mdp, u.SalaireBrut AS bdd_cout, u.IDFonc AS bdd_id_fonc, f.Intitulé AS bdd_fonction, p.Libelle AS bdd_pole \
                     FROM utilisateur AS u \
                     JOIN fonction AS f ON f.IDFonc = u.IDFonc \
                     JOIN pole AS p ON p.IDPole = p.IDPole \
@@ -21,16 +21,16 @@ class User:
             result = link.query(query, [self._id_table, ])
 
             #On hydrate l'objet à partir des éléments récupérés en BDD
-            for id_bdd, nom, prenom, identifiant, mdp, cout, id_fonc, fonction, pole in result:
+            for id_bdd, bdd_nom, bdd_prenom, bdd_identifiant, bdd_mdp, bdd_cout, bdd_id_fonc, bdd_fonction, bdd_pole in result:
                 self._id_table = id_bdd
-                self.fonction = fonction
-                self.pole = pole
-                self.nom = nom
-                self.prenom = prenom
-                self.identifiant = identifiant
-                self._mdp = mdp
-                self.cout = cout
-                self.id_fonc = id_fonc
+                self.fonction = bdd_fonction
+                self.pole = bdd_pole
+                self.nom = bdd_nom
+                self.prenom = bdd_prenom
+                self.identifiant = bdd_identifiant
+                self._mdp = bdd_mdp
+                self.cout = bdd_cout
+                self.id_fonc = bdd_id_fonc
 
             #Récupération de la liste des roles
             self.roles = dict()
