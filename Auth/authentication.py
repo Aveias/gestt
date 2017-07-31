@@ -28,11 +28,10 @@ class Auth():
 
         #On va récupérer les infos en BDD
         link = dbo.DBLink()
-        result = link.query("SELECT IDUtil, Nom, MdP FROM utilisateur WHERE Identifiant = %s", [self.input_id, ])
+        result = link.query("SELECT IDUtil, MdP FROM utilisateur WHERE Identifiant = %s", [self.input_id, ])
 
-        for id_user, nom, mdp in result:
+        for id_user, mdp in result:
             user_id = id_user
-            user_id = nom
             user_psswd = mdp
 
         #Si l'user ID a été trouvé
@@ -40,7 +39,7 @@ class Auth():
         if user_id != None:
             if self.input_psswd.hexdigest() == user_psswd:
                 Auth.access = True
-                Auth.current_user_id = id_user
+                Auth.current_user_id = user_id
                 print("Accès autorisé")
             else:
                 print("Accès refusé : Le mot de passe est incorrect")
