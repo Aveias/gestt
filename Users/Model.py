@@ -5,12 +5,12 @@ import DB.dbLink as db
 class User:
     """Modèle utilisateur. Contient un objet utilisateur"""
 
-    def __init__(self, id='', nom='', prenom='', identifiant='', mdp='', cout='', idfonc='', fonction='', pole='', roles=dict()):
+    def __init__(self, user_id='', nom='', prenom='', identifiant='', mdp='', cout='', idfonc='', fonction='', pole='', roles=dict()):
         """Constructeur initialisant utilisateur à partir d'un ID ou des données indiquées"""
 
         #On load l'user depuis la BDD si demandé avec un ID
-        if id != '':
-            self._id_table = id
+        if user_id != '':
+            self._id_table = user_id
             #On va chercher l'user en base de données
             link = db.DBLink()
             query = "SELECT u.IDUtil AS id_bdd, u.Nom AS bdd_nom, u.Prénom AS bdd_prenom, u.Identifiant AS bdd_identifiant, u.MdP AS bdd_mdp, u.SalaireBrut AS bdd_cout, u.IDFonc AS bdd_id_fonc, f.Intitulé AS bdd_fonction, p.Libelle AS bdd_pole \
