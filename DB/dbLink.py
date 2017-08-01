@@ -30,11 +30,11 @@ class DBLink:
         try:
             self._db_cur.execute(query, args)
             self._db_connection.commit()
-            message = "Element ajouté"
+
         except mariadb.Error as e:
-            message = "Erreur"
+
             print("Erreur : ", e)
-        return message
+        return self._db_cur
 
     def __del__(self):
         """fermeture de la connexion"""
