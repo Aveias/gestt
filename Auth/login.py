@@ -1,5 +1,5 @@
 # -*-coding:utf8 -*
-"""Affichage de la fen�tre de login"""
+"""Affichage de la fenêtre de login"""
 from __future__ import unicode_literals
 from tkinter import *
 import Auth.authentication as auth
@@ -11,6 +11,7 @@ class Login():
     def __init__(self):
 
         self.fenetre = Tk()
+        self.fenetre.title('login')
 
         # Création de nos widgets
         self.message = Label(self.fenetre, text="Merci de vous identifier")
