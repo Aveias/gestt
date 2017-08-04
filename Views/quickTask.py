@@ -2,8 +2,6 @@
 """Fenêtre de rapide : Vue"""
 #TODO: Rajouter une checkbox pour ajout d'une entrée de temps manuel (sans chrono)
 
-
-from __future__ import unicode_literals
 import sys
 import os
 from tkinter import *
@@ -12,6 +10,7 @@ DOSSIER_COURRANT = os.path.dirname(os.path.abspath(__file__))
 DOSSIER_PARENT = os.path.dirname(DOSSIER_COURRANT)
 sys.path.append(DOSSIER_PARENT)
 from DB.dbLink import DBLink as db
+from Controllers.TasksController import TasksController as TasksCont
 
 
 
@@ -35,32 +34,37 @@ class QuickTask:
         Label(QuickTask.fenetre, text="Nom du projet :").pack()
         # Create a Tkinter variable
         QuickTask.project = StringVar(QuickTask.fenetre)
-        proj_choices = dict()
+        self.proj_choices = dict()
         #Récupération des types et insertion comme options
-        projects = link.query("SELECT IDProj, Intitulé FROM projet ", [])
+        projects = link.query("SELECT IDProj, Intitulé FROM projet WHERE IDStat = 1", [])
         for pro_id, pro_nom in projects:
-            proj_choices[pro_nom] = pro_id
+            self.proj_choices[pro_nom] = pro_id
 
         QuickTask.project.set(project_name) # set the default option
-        OptionMenu(QuickTask.fenetre, QuickTask.project, *proj_choices).pack()
+        OptionMenu(QuickTask.fenetre, QuickTask.project, *self.proj_choices).pack()
 
         ###Champ de type
         # Create a Tkinter variable
         QuickTask.type_value = StringVar(QuickTask.fenetre)
-        choices = dict()
+        self.ty_choices = dict()
         #Récupération des types et insertion comme options
         types = link.query("SELECT * FROM type ", [])
         for ty_id, ty_nom in types:
-            choices[ty_nom] = ty_id
+            self.ty_choices[ty_nom] = ty_id
 
         QuickTask.type_value.set("Sélectionner...") # set the default option
         Label(QuickTask.fenetre, text="Type de tâche :").pack()
-        OptionMenu(QuickTask.fenetre, QuickTask.type_value, *choices).pack()
+        OptionMenu(QuickTask.fenetre, QuickTask.type_value, *self.ty_choices).pack()
 
         ###Champ de description
         Label(QuickTask.fenetre, text="Description :").pack()
         QuickTask.input_desc = Entry(QuickTask.fenetre)
         QuickTask.input_desc.pack()
+
+        ###Champ de commentaire
+        Label(QuickTask.fenetre, text="Commentaire :").pack()
+        QuickTask.input_comm = Text(QuickTask.fenetre, width=25, height=3)
+        QuickTask.input_comm.pack()
 
         ###Minutes de décalage pour le bouton démarrer/arrêter
         Label(QuickTask.fenetre, text="Décalage : ").pack()
@@ -117,12 +121,19 @@ class QuickTask:
                 QuickTask.end_time = datetime.now() - timedelta(minutes=decalage)
                 QuickTask.start_stop['text'] = "Démarrer"
                 self.min_label['text'] = "Tâche commencée il y a "
-                #TODO: appel à la fonction controleur enregistrant la tâche en BDD
+                # appel à la fonction controleur enregistrant la tâche en BDD
+                controller = TasksCont()
+                controller.register(QuickTask.heure_debut, QuickTask.heure_fin,
+                                    QuickTask.input_comm.get('1.0', 'end'),
+                                    self.proj_choices[QuickTask.project.get()],
+                                    QuickTask.input_desc.get(),
+                                    self.ty_choices[QuickTask.type_value.get()])
                 #On change le statut du bouton et on vide les champs
                 QuickTask.activate = not QuickTask.activate
                 QuickTask.heure_debut['state'] = NORMAL
                 QuickTask.heure_debut.delete(0, 'end')
                 QuickTask.heure_debut['state'] = DISABLED
+                QuickTask.input_comm.delete('1.0', 'end')
 
                 #Désactivation du bouton annuler et vidage de champs
                 QuickTask.cancel['state'] = DISABLED
