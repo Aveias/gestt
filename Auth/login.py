@@ -1,8 +1,14 @@
 # -*-coding:utf8 -*
 """Affichage de la fenêtre de login"""
 from __future__ import unicode_literals
+import sys
+import os
+DOSSIER_COURRANT = os.path.dirname(os.path.abspath(__file__))
+DOSSIER_PARENT = os.path.dirname(DOSSIER_COURRANT)
+sys.path.append(DOSSIER_PARENT)
 from tkinter import *
-import Auth.authentication as auth
+import Auth.authentification as auth
+from PIL import Image,ImageTk
 
 class Login():
     """Classe gérant l'affichage de la fenêtre de login"""
@@ -11,8 +17,13 @@ class Login():
     def __init__(self):
 
         self.fenetre = Tk()
+        
         self.fenetre.title('login')
-
+        try:
+            self.fenetre.iconbitmap("..\\icon.ico")
+        except Exception:
+            self.fenetre.iconbitmap("icon.ico")
+        
         # Création de nos widgets
         self.message = Label(self.fenetre, text="Merci de vous identifier")
         self.message.pack()
@@ -38,3 +49,4 @@ class Login():
 
         if auth.Auth.access == True:
             self.fenetre.destroy()
+
