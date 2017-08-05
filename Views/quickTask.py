@@ -36,21 +36,23 @@ class QuickTask:
         QuickTask.project = StringVar(QuickTask.fenetre)
         self.proj_choices = dict()
         #Récupération des types et insertion comme options
-        projects = link.query("SELECT IDProj, Intitulé FROM projet WHERE IDStat = 1", [])
-        for pro_id, pro_nom in projects:
-            self.proj_choices[pro_nom] = pro_id
+            # Attention : si deux projets ouverts ont le même intitulé,
+            # seul le plus récent sera pris en compte
+        projects = link.query("SELECT IDProj, Intitulé FROM projet WHERE IDStat = 1", []).fetchall()
+        for elem in projects:
+            self.proj_choices[elem[1]] = elem[0]
 
         QuickTask.project.set(project_name) # set the default option
         OptionMenu(QuickTask.fenetre, QuickTask.project, *self.proj_choices).pack()
 
         ###Champ de type
-        # Create a Tkinter variable
+            # Create a Tkinter variable
         QuickTask.type_value = StringVar(QuickTask.fenetre)
         self.ty_choices = dict()
-        #Récupération des types et insertion comme options
-        types = link.query("SELECT * FROM type ", [])
-        for ty_id, ty_nom in types:
-            self.ty_choices[ty_nom] = ty_id
+            #Récupération des types et insertion comme options
+        types = link.query("SELECT * FROM type ", []).fetchall()
+        for elem in types:
+            self.ty_choices[elem[1]] = elem[0]
 
         QuickTask.type_value.set("Sélectionner...") # set the default option
         Label(QuickTask.fenetre, text="Type de tâche :").pack()
@@ -101,16 +103,18 @@ class QuickTask:
         #Action à déclencher en fonction de si on démarre ou finit l'enregistrement
         if not QuickTask.activate: #Si on démarre l'enregistrement
             #Gestion de l'heure de départ
-            QuickTask.start_time = datetime.now() - timedelta(minutes=decalage)
+            QuickTask.h_debut_value = datetime.now() - timedelta(minutes=decalage)
             QuickTask.heure_debut['state'] = NORMAL
-            QuickTask.heure_debut.insert(0, QuickTask.start_time.strftime('%H:%M'))
+            QuickTask.heure_debut.insert(0, QuickTask.h_debut_value.strftime('%H:%M'))
             QuickTask.heure_debut['state'] = DISABLED
             #Modification des labels
             QuickTask.start_stop['text'] = "Terminer"
             self.min_label['text'] = "Tâche terminée il y a "
-            #On change le statut du bouton et on active l'annulation
+            #On change le statut du bouton, on active l'annulation, on vide le champ décalage
             QuickTask.activate = not QuickTask.activate
             QuickTask.cancel['state'] = NORMAL
+            QuickTask.input_min.delete(0, 'end')
+            QuickTask.input_min.insert(0, 0)
 
         else: #Si on le finit
             #Vérifions que les champs sont bien remplis
@@ -118,12 +122,15 @@ class QuickTask:
             and QuickTask.type_value.get() != 'Sélectionner...' \
             and QuickTask.input_desc.get() != '':
             #Oui ? ok on va pour enregistrer
-                QuickTask.end_time = datetime.now() - timedelta(minutes=decalage)
+                QuickTask.h_fin_value = datetime.now() - timedelta(minutes=decalage)
+                QuickTask.heure_fin['state'] = NORMAL
+                QuickTask.heure_fin.insert(0, QuickTask.h_fin_value.strftime('%H:%M'))
+                QuickTask.heure_fin['state'] = DISABLED
                 QuickTask.start_stop['text'] = "Démarrer"
                 self.min_label['text'] = "Tâche commencée il y a "
                 # appel à la fonction controleur enregistrant la tâche en BDD
                 controller = TasksCont()
-                controller.register(QuickTask.heure_debut, QuickTask.heure_fin,
+                controller.register(QuickTask.heure_debut.get(), QuickTask.heure_fin.get(),
                                     QuickTask.input_comm.get('1.0', 'end'),
                                     self.proj_choices[QuickTask.project.get()],
                                     QuickTask.input_desc.get(),
@@ -133,7 +140,12 @@ class QuickTask:
                 QuickTask.heure_debut['state'] = NORMAL
                 QuickTask.heure_debut.delete(0, 'end')
                 QuickTask.heure_debut['state'] = DISABLED
+                QuickTask.heure_fin['state'] = NORMAL
+                QuickTask.heure_fin.delete(0, 'end')
+                QuickTask.heure_fin['state'] = DISABLED
                 QuickTask.input_comm.delete('1.0', 'end')
+                QuickTask.input_min.delete(0, 'end')
+                QuickTask.input_min.insert(0, 0)
 
                 #Désactivation du bouton annuler et vidage de champs
                 QuickTask.cancel['state'] = DISABLED

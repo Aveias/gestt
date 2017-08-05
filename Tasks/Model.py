@@ -57,11 +57,11 @@ class Task:
         query = "SELECT IDDesc \
                 FROM description \
                 WHERE Libellé = %s AND IDType = %s"
-        result = link.query(query, [self.description, self.id_type, ])
-        if result.with_rows:
+        result = link.query(query, [self.description, self.id_type, ]).fetchone()
+        if result is not None:
             #Si la description existe en BDD on recupère l'ID
-            for IDDesc, in result:
-                self.id_desc = IDDesc
+            for elem in result:
+                self.id_desc = elem
         else:
             #Sinon on l'enregistre
             query = "INSERT INTO description \
@@ -80,18 +80,19 @@ class Task:
         query = "SELECT IDDate \
                 FROM dates \
                 WHERE LaDate = %s "
-        result = link.query(query, [self.date, ])
+        result = link.query(query, [self.date, ]).fetchone()
 
         #Si oui, on récupère son ID
-        if result.with_rows:
-            for IDDate, in result:
-                self.id_date = IDDate
+        if result is not None:
+            for element in result:
+                self.id_date = element
         else:
             #Sinon, on enregistre en BDD
+            link = db.DBLink()
             query = "INSERT INTO dates \
-                    (LaDate) \
-                    VALUES (%s)"
+                    SET LaDate = (%s)"
             result = link.commit(query, [self.date, ])
+            print(result.lastrowid)
 
             #Récupération de l'ID
             self.id_date = result.lastrowid
