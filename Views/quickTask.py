@@ -1,6 +1,8 @@
 # -*-coding:utf8 -*
 """Fenêtre de rapide : Vue"""
 #TODO: Rajouter une checkbox pour ajout d'une entrée de temps manuel (sans chrono)
+#TODO: Passer toutes les vérifications des champs dans le controleur
+
 
 import sys
 import os
@@ -17,12 +19,12 @@ from Controllers.TasksController import TasksController as TasksCont
 class QuickTask:
     """Fenêtre d'ajout rapide de tâche"""
 
-    def __init__(self, project_name='Sélectionner...', activate=False):
+    def __init__(self, mother, project_name='Sélectionner...', activate=False):
         #Initialisation des variables
         QuickTask.activate = activate
         link = db() #On aura besoin de la BDD pour récupérer projets et types
 
-        QuickTask.fenetre = Tk()
+        QuickTask.fenetre = Toplevel(mother)
         QuickTask.fenetre.title("Tâche rapide")
 
         ###Titre
@@ -121,38 +123,48 @@ class QuickTask:
             if QuickTask.project.get() != 'Sélectionner...' \
             and QuickTask.type_value.get() != 'Sélectionner...' \
             and QuickTask.input_desc.get() != '':
-            #Oui ? ok on va pour enregistrer
+                #On gère l'heure de fin
                 QuickTask.h_fin_value = datetime.now() - timedelta(minutes=decalage)
-                QuickTask.heure_fin['state'] = NORMAL
-                QuickTask.heure_fin.insert(0, QuickTask.h_fin_value.strftime('%H:%M'))
-                QuickTask.heure_fin['state'] = DISABLED
-                QuickTask.start_stop['text'] = "Démarrer"
-                self.min_label['text'] = "Tâche commencée il y a "
-                # appel à la fonction controleur enregistrant la tâche en BDD
-                controller = TasksCont()
-                controller.register(QuickTask.heure_debut.get(), QuickTask.heure_fin.get(),
-                                    QuickTask.input_comm.get('1.0', 'end'),
-                                    self.proj_choices[QuickTask.project.get()],
-                                    QuickTask.input_desc.get(),
-                                    self.ty_choices[QuickTask.type_value.get()])
-                #On change le statut du bouton et on vide les champs
-                QuickTask.activate = not QuickTask.activate
-                QuickTask.heure_debut['state'] = NORMAL
-                QuickTask.heure_debut.delete(0, 'end')
-                QuickTask.heure_debut['state'] = DISABLED
-                QuickTask.heure_fin['state'] = NORMAL
-                QuickTask.heure_fin.delete(0, 'end')
-                QuickTask.heure_fin['state'] = DISABLED
-                QuickTask.input_comm.delete('1.0', 'end')
-                QuickTask.input_min.delete(0, 'end')
-                QuickTask.input_min.insert(0, 0)
+                #Et on vérifie que l'heure de début est inférieure à celle de fin
+                ecart_temps =  QuickTask.h_fin_value - QuickTask.h_debut_value
 
-                #Désactivation du bouton annuler et vidage de champs
-                QuickTask.cancel['state'] = DISABLED
-                QuickTask.input_desc.delete(0, 'end')
+                if QuickTask.h_fin_value > QuickTask.h_debut_value \
+                and ecart_temps.seconds > 60:
+                #tout est ok ?  on va enregistrer
+                    #On modifie le champ d'heure de fin
+                    QuickTask.heure_fin['state'] = NORMAL
+                    QuickTask.heure_fin.insert(0, QuickTask.h_fin_value.strftime('%H:%M'))
+                    QuickTask.heure_fin['state'] = DISABLED
+                    #Et les labels
+                    QuickTask.start_stop['text'] = "Démarrer"
+                    self.min_label['text'] = "Tâche commencée il y a "
+                    # appel à la fonction controleur enregistrant la tâche en BDD
+                    controller = TasksCont()
+                    controller.register(QuickTask.heure_debut.get(), QuickTask.heure_fin.get(),
+                                        QuickTask.input_comm.get('1.0', 'end'),
+                                        self.proj_choices[QuickTask.project.get()],
+                                        QuickTask.input_desc.get(),
+                                        self.ty_choices[QuickTask.type_value.get()])
+                    #On change le statut du bouton et on vide les champs
+                    QuickTask.activate = not QuickTask.activate
+                    QuickTask.heure_debut['state'] = NORMAL
+                    QuickTask.heure_debut.delete(0, 'end')
+                    QuickTask.heure_debut['state'] = DISABLED
+                    QuickTask.heure_fin['state'] = NORMAL
+                    QuickTask.heure_fin.delete(0, 'end')
+                    QuickTask.heure_fin['state'] = DISABLED
+                    QuickTask.input_comm.delete('1.0', 'end')
+                    QuickTask.input_min.delete(0, 'end')
+                    QuickTask.input_min.insert(0, 0)
 
-                #On affiche un message disant OK
-                self.msg['text'] = "Tâche enregistrée"
+                    #Désactivation du bouton annuler et vidage de champs
+                    QuickTask.cancel['state'] = DISABLED
+                    QuickTask.input_desc.delete(0, 'end')
+
+                    #On affiche un message disant OK
+                    self.msg['text'] = "Tâche enregistrée"
+                else:
+                    self.msg['text'] = "L'heure de fin doit être supérieure ou égale à l'heure de début"
 
             else:
             #non ? on affiche un message et on valide rien du tout, namého
@@ -174,13 +186,3 @@ class QuickTask:
 
         #AFfichage du message
         self.msg['text'] = "Enregistrement de la tâche annulé"
-
-
-
-
-
-
-
-#Test de la fenêtre
-fen = QuickTask()
-fen.fenetre.mainloop()

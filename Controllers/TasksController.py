@@ -25,7 +25,6 @@ class TasksController:
         self.task = Task(heure_debut=heured, heure_fin=heuref, commentaire=comm,
                          id_util=Auth.current_user_id, id_proj=idpro, desc=descr, date=day,
                          id_type=idty)
-        print(day)
         self.task.register()
 
 

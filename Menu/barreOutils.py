@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
-DOSSIER_COURRANT = os.path.dirname(os.path.abspath(__file__))
-DOSSIER_PARENT = os.path.dirname(DOSSIER_COURRANT)
-sys.path.append(DOSSIER_PARENT)
 from tkinter import *
 from tkinter.messagebox import *
 from PIL import Image, ImageTk
+DOSSIER_COURRANT = os.path.dirname(os.path.abspath(__file__))
+DOSSIER_PARENT = os.path.dirname(DOSSIER_COURRANT)
+sys.path.append(DOSSIER_PARENT)
+from Views.quickTask import QuickTask
+
 
 
 class BarreOutils():
@@ -81,41 +83,31 @@ class BarreOutils():
         self.bouton_deconnexion.grid(row=7,column=1)
         self.bouton_deconnexion.image = photo
 ################################################################################################################
-    def deconnexion(self,*args):
+    def deconnexion(self, *args):
         """L'utilisateur veut fermer le programme et se deconnecter"""
         self.callback()
         if self.fermer == True:
             self.fenetre.destroy()
-    def open_taches_rapides(self,*args):
+    def open_taches_rapides(self, *args):
         """L'utilisateur veut ouvrir la fenetre des taches rapides"""
-        toplevel = Toplevel(self.fenetre)
-        toplevel.title('Subroot')
+        QuickTask(mother=self.fenetre)
         # TODO : ouvrir la fenetre des taches rapides
-    def open_nouveau_projet(self,*args):
+    def open_nouveau_projet(self, *args):
         """L'utilisateur veut ouvrir la fenetre des nouveaux projets"""
         # TODO : ouvrir la fenetre des nouveaux projets
-    def open_rapports(self,*args):
+    def open_rapports(self, *args):
         """L'utilisateur veut ouvrir la fenetre des rapports"""
         # TODO : ouvrir la fenetre des rapports
-    def naviguer(self,*args):
+    def naviguer(self, *args):
         """L'utilisateur veut ouvrir la fenetre des rapports"""
         # TODO : ouvrir la fenetre de navigation
         self.fenetre.state('iconic')
 
-    def geoliste(self,g):
+    def geoliste(self, g):
         r=[i for i in range(0,len(g)) if not g[i].isdigit()]
         return [int(g[0:r[0]]),int(g[r[0]+1:r[1]]),int(g[r[1]+1:r[2]]),int(g[r[2]+1:])]
 
     def callback(self):
-        if askyesno('Deconnexion', 'Êtes-vous sûr de vouloir vous deconnecter ?'):
-            self.fermer = True
-        else:
+        self.fermer = askyesno('Deconnexion', 'Êtes-vous sûr de vouloir vous deconnecter ?')
             #showinfo('Titre 3', 'Vous avez peur!')
             #showerror("Titre 4", "Aha")
-            self.fermer = False
-
-b = BarreOutils()
-print(b.fenetre.geometry())
-print(b.largeurBoutons)
-print(b.hauteurBoutons)
-b.fenetre.mainloop()

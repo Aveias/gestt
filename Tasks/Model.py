@@ -92,8 +92,6 @@ class Task:
             query = "INSERT INTO dates \
                     SET LaDate = (%s)"
             result = link.commit(query, [self.date, ])
-            print(result.lastrowid)
-
             #Récupération de l'ID
             self.id_date = result.lastrowid
 
