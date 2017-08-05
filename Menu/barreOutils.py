@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-
+import sys
+import os
+DOSSIER_COURRANT = os.path.dirname(os.path.abspath(__file__))
+DOSSIER_PARENT = os.path.dirname(DOSSIER_COURRANT)
+sys.path.append(DOSSIER_PARENT)
 from tkinter import *
 from tkinter.messagebox import *
 from PIL import Image, ImageTk
@@ -43,35 +47,35 @@ class BarreOutils():
         #liste_projets.insert(END, "chouxfleur")
 ################################################################################################################
 	# Bouton tache rapides
-        image = Image.open('fleche.png')
+        image = Image.open("Menu\\fleche.png")
         photo = ImageTk.PhotoImage(image)
         self.bouton_tache_rapide = Button(self.fenetre, image=photo,width=self.largeurBoutons,height=self.hauteurBoutons, command=self.open_taches_rapides)
         self.bouton_tache_rapide.grid(row=3,column=1, padx = self.largeur * 0.02)
         self.bouton_tache_rapide.image = photo
 ################################################################################################################
 	# Bouton Nouveau Projet
-        image = Image.open('plus4.png')
+        image = Image.open("Menu\\plus4.png")
         photo = ImageTk.PhotoImage(image)
         self.bouton_deconnexion = Button(self.fenetre, image=photo,width=self.largeurBoutons,height=self.hauteurBoutons, command=self.open_nouveau_projet)
         self.bouton_deconnexion.grid(row=4,column=1)
         self.bouton_deconnexion.image = photo
 ################################################################################################################
 	# Bouton Rapports
-        image = Image.open('graphe.png')
+        image = Image.open("Menu\\graphe.png")
         photo = ImageTk.PhotoImage(image)
         self.bouton_deconnexion = Button(self.fenetre, image=photo,width=self.largeurBoutons,height=self.hauteurBoutons, command=self.open_rapports)
         self.bouton_deconnexion.grid(row=5,column=1)
         self.bouton_deconnexion.image = photo
 ################################################################################################################
 	# Bouton Naviguer
-        image = Image.open('loupe.jpg')
+        image = Image.open("Menu\\loupe.jpg")
         photo = ImageTk.PhotoImage(image)
         self.bouton_naviguer = Button(self.fenetre, image=photo,width=self.largeurBoutons,height=self.hauteurBoutons, command=self.naviguer)
         self.bouton_naviguer.grid(row=6,column=1)
         self.bouton_naviguer.image = photo
 ################################################################################################################
 	# Bouton Deconnexion
-        image = Image.open('deco.jpg')
+        image = Image.open("Menu\\deco.jpg")
         photo = ImageTk.PhotoImage(image)
         self.bouton_deconnexion = Button(self.fenetre, image=photo,width=self.largeurBoutons,height=self.hauteurBoutons, command=self.deconnexion)
         self.bouton_deconnexion.grid(row=7,column=1)
