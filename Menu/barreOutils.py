@@ -17,6 +17,12 @@ class BarreOutils():
     def __init__(self):
 	# céation de la fenetre
         self.fenetre = Tk()
+        # icone fenetre
+        try:
+            self.fenetre.iconbitmap("..\icon.ico")
+        except Exception:
+            self.fenetre.iconbitmap("icon.ico")
+            
         # Booleen fermer : devient  true quand on appuie sur le bouton deconnexion
         self.fermer = False
         # Dimension et position fenetre
