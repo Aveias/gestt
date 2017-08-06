@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
-DOSSIER_COURRANT = os.path.dirname(os.path.abspath(__file__))
-DOSSIER_PARENT = os.path.dirname(DOSSIER_COURRANT)
-sys.path.append(DOSSIER_PARENT)
 from tkinter import *
 from tkinter.messagebox import *
 from PIL import Image, ImageTk
+DOSSIER_COURRANT = os.path.dirname(os.path.abspath(__file__))
+DOSSIER_PARENT = os.path.dirname(DOSSIER_COURRANT)
+sys.path.append(DOSSIER_PARENT)
+from Views.quickTask import QuickTask
 
 
 class BarreOutils():
@@ -17,12 +18,7 @@ class BarreOutils():
     def __init__(self):
 	# céation de la fenetre
         self.fenetre = Tk()
-        # icone fenetre
-        try:
-            self.fenetre.iconbitmap("..\icon.ico")
-        except Exception:
-            self.fenetre.iconbitmap("icon.ico")
-            
+
         # Booleen fermer : devient  true quand on appuie sur le bouton deconnexion
         self.fermer = False
         # Dimension et position fenetre
@@ -66,13 +62,13 @@ class BarreOutils():
         graphe2 = "Menu\\graphe.png"
         loupe2 = "Menu\\loupe.jpg"
         plus2 = "Menu\\plus4.png"
-           
+
 ################################################################################################################
         try:
-            image = Image.open(fleche)
+            image = Image.open("./Images/quicktask.png")
         except Exception:
             image = Image.open(fleche2)
-            
+
         photo = ImageTk.PhotoImage(image)
         self.bouton_tache_rapide = Button(self.fenetre, image=photo,width=self.largeurBoutons,height=self.hauteurBoutons, command=self.open_taches_rapides)
         self.bouton_tache_rapide.grid(row=3,column=1, padx = self.largeur * 0.02)
@@ -80,7 +76,7 @@ class BarreOutils():
 ################################################################################################################
 	# Bouton Nouveau Projet
         try:
-            image = Image.open(plus)
+            image = Image.open("./Images/add.png")
         except Exception:
             image = Image.open(plus2)
         photo = ImageTk.PhotoImage(image)
@@ -90,7 +86,7 @@ class BarreOutils():
 ################################################################################################################
 	# Bouton Rapports
         try:
-            image = Image.open(graphe)
+            image = Image.open("./Images/stats.png")
         except Exception:
             image = Image.open(graphe2)
         photo = ImageTk.PhotoImage(image)
@@ -100,7 +96,7 @@ class BarreOutils():
 ################################################################################################################
 	# Bouton Naviguer
         try:
-            image = Image.open(loupe)
+            image = Image.open("./Images/browse.png")
         except Exception:
             image = Image.open(loupe2)
         photo = ImageTk.PhotoImage(image)
@@ -110,7 +106,7 @@ class BarreOutils():
 ################################################################################################################
 	# Bouton Deconnexion
         try:
-            image = Image.open(deco)
+            image = Image.open("./Images/quit.png")
         except Exception:
             image = Image.open(deco2)
         photo = ImageTk.PhotoImage(image)
@@ -118,38 +114,35 @@ class BarreOutils():
         self.bouton_deconnexion.grid(row=7,column=1)
         self.bouton_deconnexion.image = photo
 ################################################################################################################
-    def deconnexion(self,*args):
+    def deconnexion(self):
         """L'utilisateur veut fermer le programme et se deconnecter"""
         self.callback()
         if self.fermer == True:
             self.fenetre.destroy()
-    def open_taches_rapides(self,*args):
+    def open_taches_rapides(self):
         """L'utilisateur veut ouvrir la fenetre des taches rapides"""
-        toplevel = Toplevel(self.fenetre)
-        toplevel.title('Subroot')
+        QuickTask(mother=self.fenetre)
         # TODO : ouvrir la fenetre des taches rapides
-    def open_nouveau_projet(self,*args):
+    def open_nouveau_projet(self):
         """L'utilisateur veut ouvrir la fenetre des nouveaux projets"""
         # TODO : ouvrir la fenetre des nouveaux projets
-    def open_rapports(self,*args):
+    def open_rapports(self):
         """L'utilisateur veut ouvrir la fenetre des rapports"""
         # TODO : ouvrir la fenetre des rapports
-    def naviguer(self,*args):
+    def naviguer(self):
         """L'utilisateur veut ouvrir la fenetre des rapports"""
         # TODO : ouvrir la fenetre de navigation
         self.fenetre.state('iconic')
 
-    def geoliste(self,g):
+    def geoliste(self, g):
         r=[i for i in range(0,len(g)) if not g[i].isdigit()]
         return [int(g[0:r[0]]),int(g[r[0]+1:r[1]]),int(g[r[1]+1:r[2]]),int(g[r[2]+1:])]
 
     def callback(self):
-        if askyesno('Deconnexion', 'Êtes-vous sûr de vouloir vous deconnecter ?'):
-            self.fermer = True
-        else:
+        self.fermer = askyesno('Deconnexion', 'Êtes-vous sûr de vouloir vous deconnecter ?')
             #showinfo('Titre 3', 'Vous avez peur!')
             #showerror("Titre 4", "Aha")
-            self.fermer = False
+
     def resource_path(self, relative_path):
         """ Get absolute path to resource, works for dev and for PyInstaller """
         try:
