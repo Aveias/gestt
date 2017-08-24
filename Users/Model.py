@@ -100,7 +100,7 @@ class User:
         result = link.query(query, [self._id_table, ])
 
         for id_role, role in result:
-            self.roles[role] = id_role
+            self.roles[id_role] = role
 
     def update_roles(self):
         """enregistrement/mise à jour des roles de l'uitlisateur"""
@@ -113,7 +113,7 @@ class User:
         link.commit(query, [self._id_table, ])
 
         #Puis on enregistre les nouveaux
-        for rol_id in self.roles.values():
+        for rol_id in self.roles.keys():
             query = "INSERT INTO roleattribution \
                         (IDUtil, IDRole) \
                         VALUES(%s, %s)"
