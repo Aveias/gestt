@@ -13,13 +13,13 @@ from Users.Model import User
 
 class BrowseView:
 
-    def __init__(self):
+    def __init__(self, mother):
 
         self.ctrl = BrowseController()
         self.search_input = ""
 
         #On lance la fenêtre par rapport à la fenêtre mère
-        BrowseView.root = Tk()
+        BrowseView.root = Toplevel(mother)
         BrowseView.root.title("Naviguer")
 
         #Initialisation des variables
@@ -81,6 +81,3 @@ class BrowseView:
 
 
 #test
-
-test = BrowseView()
-test.root.mainloop()

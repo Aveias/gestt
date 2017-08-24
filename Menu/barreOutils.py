@@ -9,13 +9,14 @@ DOSSIER_COURRANT = os.path.dirname(os.path.abspath(__file__))
 DOSSIER_PARENT = os.path.dirname(DOSSIER_COURRANT)
 sys.path.append(DOSSIER_PARENT)
 from Views.quickTask import QuickTask as QT
+from Views.browseView import BrowseView as BV
 
 
 class BarreOutils():
 
     """Notre fenêtre principale.
     Tous les widgets sont stockés comme attributs de cette fenêtre."""
-    
+
     def __init__(self):
         self.mere = "rien"
 	# céation de la fenetre
@@ -28,7 +29,7 @@ class BarreOutils():
         self.QTdemarrer = False
         # Booleen barreReduite : devient  true quand la barre se reduit
         self.boolBarreReduite = False
-        
+
         # Dimension et position fenetre
         self.hauteur = self.fenetre.winfo_screenheight()/1.4 # 70% de la page en hauteur
         self.largeur = self.fenetre.winfo_screenwidth()/13  # 10% de la page en largeur
@@ -75,7 +76,7 @@ class BarreOutils():
             image = Image.open(fleche)
         except Exception:
             image = Image.open(fleche2)
-            
+
         photo = ImageTk.PhotoImage(image)
         self.bouton_tache_rapide = Button(self.fenetre, image=photo,width=self.largeurBoutons,height=self.hauteurBoutons, command=self.open_taches_rapides)
         self.bouton_tache_rapide.grid(row=3,column=1, padx = self.largeur * 0.02)
@@ -113,7 +114,7 @@ class BarreOutils():
             image = Image.open(loupe)
         except Exception:
             image = Image.open(loupe2)
-            
+
         photo = ImageTk.PhotoImage(image)
         self.bouton_naviguer = Button(self.fenetre, image=photo,width=self.largeurBoutons,height=self.hauteurBoutons, command=self.naviguer)
         self.bouton_naviguer.grid(row=6,column=1)
@@ -126,7 +127,7 @@ class BarreOutils():
         except Exception:
             image = Image.open(deco2)
 
-            
+
         photo = ImageTk.PhotoImage(image)
         self.bouton_deconnexion = Button(self.fenetre, image=photo,width=self.largeurBoutons,height=self.hauteurBoutons, command=self.deconnexion)
         self.bouton_deconnexion.grid(row=7,column=1)
@@ -144,7 +145,7 @@ class BarreOutils():
         self.fenetre.bind("<Leave>", self.Leave)
         self.fenetre.bind("<Enter>", self.Enter)
         # Object qui contiendra un objet de la classe QuickTask
-        self.q = object 
+        self.q = object
         # Object qui contiendra un objet Toplevel ( une fenetre secondaire )
         self.barreReduite = Toplevel(master=self.fenetre) # on instancie la fenetre
         self.barreReduite.attributes("-topmost",1, "-alpha", 0.01)
@@ -158,20 +159,20 @@ class BarreOutils():
         self.barreReduite.attributes("-topmost",1, "-alpha", 0.01) # l'attribut topmost fait passer la fenetre au premier plan, l'attribut -alpha la rends transparente
         # Associer l'evenement entrée de la souris dans la fenetre à la fonction EnterBarreReduite
         self.barreReduite.bind("<Enter>", self.EnterBarreReduite)
-        
+
         self.fermetureQT() # instanciation de la fenetre Quicktask et réinstanciation lors de sa fermetur
 
         # Compteurs servants à determiner quand le curseur sort de la fenetre
         self.cpt1 = 0 # s'incrémente quand on sort des boutons ou de la fenetre
         self.cpt2 = 0 # s'incrémente quand on sort des boutons seulement
-        
-    ### Fonctions liées aux Boutons ###  
+
+    ### Fonctions liées aux Boutons ###
     def deconnexion(self):
         """L'utilisateur veut fermer le programme et se deconnecter"""
         self.callback()
         if self.fermer == True:
             self.fenetre.destroy()
-    ### Demande de confirmation après avoir appuyer sur le bouton Deconnexion   
+    ### Demande de confirmation après avoir appuyer sur le bouton Deconnexion
     def callback(self):
         self.fermer = askyesno('Deconnexion', 'Êtes-vous sûr de vouloir vous deconnecter ?')
     ### Cliquer sur le bouton taches rapides déclenche cette fonction qui ouvre la fenetre QuickTask
@@ -186,7 +187,7 @@ class BarreOutils():
         else:                                                                # sinon ( si le bouton tache rapide n'est pas de couleur verte )
             if self.q.fenetre.state() == "withdrawn":                           # si la fenetre QuickTask est à l'état withdrawn ( cachée, invisible )
                 self.q.fenetre.state("normal")                                      # la fenetre Quicktask passe à l'état normal
-                self.bouton_tache_rapide.configure(bg="grey")                       # le bouton tache rapide passe à la couleur gris foncé 
+                self.bouton_tache_rapide.configure(bg="grey")                       # le bouton tache rapide passe à la couleur gris foncé
                 self.bouton_tache_rapide.configure(relief = "sunken")               # et son aspect devient appuyé  pour signifier à l'utilisateur que la fenetre tache rapide est ouverte
             else:                                                               # sinon
                 self.q.fenetre.state("withdraw")                                    # l'état de Quicktask devient withdraw
@@ -204,16 +205,14 @@ class BarreOutils():
     ### cliquer sur le bouton naviguer ouvre la fenetre de navigation
     def naviguer(self):
         """L'utilisateur veut ouvrir la fenetre des rapports"""
-        # TODO : ouvrir la fenetre de navigation
-        self.fenetre.overrideredirect(0)
-        self.fenetre.state('iconic')
+        self.browse = BV(mother=self.fenetre)
 
-    ### convertir la chaine du paramentre de geometry( en liste de parametre entier 
+    ### convertir la chaine du paramentre de geometry( en liste de parametre entier
     def geoliste(self, g):
         r=[i for i in range(0,len(g)) if not g[i].isdigit()]
         return [int(g[0:r[0]]),int(g[r[0]+1:r[1]]),int(g[r[1]+1:r[2]]),int(g[r[2]+1:])]
 
-    ### Intercepter la fermeture de la fenetre barreOutil lorsqu'on la ferme autrement qu'avec le bouton quitter 
+    ### Intercepter la fermeture de la fenetre barreOutil lorsqu'on la ferme autrement qu'avec le bouton quitter
     def intercepteFermetureBarre(self):
         self.fermer = True
         self.fenetre.destroy()
@@ -244,14 +243,14 @@ class BarreOutils():
     def fermetureQT(self):
         self.q = QT(mother=self.fenetre)        # On renouvelle l'objet de la classe Quicktask qui ouvre une fenetre Quicktask
         self.q.fenetre.withdraw()               # On cache la fentre
-        self.q.fenetre.bind("<Unmap>", self.reduce) # On associe le fait de changer l'état de la fentre ( iconic) à la fonciton reduce 
-        self.q.fenetre.protocol("WM_DELETE_WINDOW", self.intercepteFermetureQT) # On associe intercepte la fermeture de la fenetre Quicktask 
+        self.q.fenetre.bind("<Unmap>", self.reduce) # On associe le fait de changer l'état de la fentre ( iconic) à la fonciton reduce
+        self.q.fenetre.protocol("WM_DELETE_WINDOW", self.intercepteFermetureQT) # On associe intercepte la fermeture de la fenetre Quicktask
         self.q.start_stop.bind('<ButtonPress>', self.QT_start) # On associe le fait de presser le bouton démarrer à la fonction QT_start
         self.q.QTdemarrer = False
         self.q.cancel.bind('<ButtonPress>', self.QT_cancel) # On associe le fait de presser le bouton annuler à la fonction QT_cancel
         self.fenetre.bind("<Leave>", self.Leave) # On associe le fait de sortir avec le curseur de la souris de la fenetre à la fonction Leave
-        
-    ### Lors de l'appuie sur le bouton demarrer de la fenetre Quicktask   
+
+    ### Lors de l'appuie sur le bouton demarrer de la fenetre Quicktask
     def QT_start(self,args):
         if self.q.QTdemarrer == False:
             self.bouton_tache_rapide.configure(bg="green")
@@ -272,7 +271,7 @@ class BarreOutils():
         self.cpt1 += 1
         print("cpt1 = ", self.cpt1)
         print("cpt2 = ", self.cpt2)
-        
+
         if self.cpt1 > self.cpt2:
             i = 1
             while i >= 0.02: # Disparition de la barre en dégradé
@@ -281,14 +280,14 @@ class BarreOutils():
                 time.sleep(0.005)
             self.fenetre.attributes("-alpha", 0)
             self.fenetre.overrideredirect(0)
-            self.fenetre.state("iconic")         
+            self.fenetre.state("iconic")
             self.fenetre.attributes("-alpha", 1)
             if self.boolBarreReduite == False:
                  self.barreReduite.state("normal")
                  self.cpt1 = 0
                  self.cpt2 = 0
                  self.boolBarreReduite = True
-                 
+
     ### lorsque le curseur de la souris rentre dans la fenetre
     def Enter(self, args):
         self.fenetre.overrideredirect(1)
@@ -312,11 +311,8 @@ class BarreOutils():
         self.fenetre.state("normal")
         self.barreReduite.withdraw()
         self.boolBarreReduite = False
-        
-            
-    
+
+
+
 #b = BarreOutils()
 #b.fenetre.mainloop()
-
-
-
