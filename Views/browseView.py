@@ -10,6 +10,7 @@ DOSSIER_PARENT = os.path.dirname(DOSSIER_COURRANT)
 sys.path.append(DOSSIER_PARENT)
 from Controllers.BrowseController import BrowseController
 from Users.Model import User
+from Views.quickTask import QuickTask as QT
 
 class BrowseView:
 
@@ -41,7 +42,8 @@ class BrowseView:
         ###Treeview listant les projets
         Label(pr_tab, text="Liste des projets").pack()
         ####Headers
-        self.pr_list = Treeview(pr_tab, selectmode="browse", show="headings", columns=("nom", "chef", "client", "num"))
+        self.pr_list = Treeview(pr_tab, selectmode="browse", show="headings",
+                                columns=("nom", "chef", "client", "num"))
         self.pr_list.heading("nom", text="Nom")
         self.pr_list.heading("chef", text="Chef de projet")
         self.pr_list.heading("client", text="client")
@@ -51,12 +53,13 @@ class BrowseView:
         for proj in projects:
             cdp = User(proj.responsable)
             self.pr_list.insert("", 1, values=(proj.nom, (cdp.nom, cdp.prenom),
-                                          proj.client, proj.num_dossier))
+                                               proj.client, proj.num_dossier))
 
         self.pr_list.pack()
 
         Button(pr_tab, text="Voir le projet").pack()
-        Button(pr_tab, text="Démarrer une tâche rapide pour ce projet").pack()
+        Button(pr_tab, text="Démarrer une tâche rapide pour ce projet",
+               command=self.launch_task).pack()
 
 
         ##Tâches
@@ -69,6 +72,7 @@ class BrowseView:
         tabs.pack()
 
     def search(self):
+        """Fonction de recherche"""
         #on récupère les résultats
         projects = self.ctrl.get_projects_search_results(self.search_input.get())
         #on vide l'arbre
@@ -77,7 +81,17 @@ class BrowseView:
         for proj in projects:
             cdp = User(proj.responsable)
             self.pr_list.insert("", 1, values=(proj.nom, (cdp.nom, cdp.prenom),
-                                          proj.client, proj.num_dossier))
+                                               proj.client, proj.num_dossier))
+
+#    def launch_task(self):
+#        """Lancement d'une tâche rapide"""
+#        selected_proj = self.pr_list.item(self.pr_list.focus(), "values")
+#        if selected_proj:
+#            self.ctrl.launch_quick_task(selected_proj[0])
+#        else:
+#            print("aucun projet sélectionné")
+
+
 
 
 #test

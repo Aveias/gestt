@@ -29,36 +29,36 @@ class QuickTask:
 
         ###Titre
         Label(QuickTask.fenetre, text="Ajout d'une tâche").pack()
-        self.msg = Label(QuickTask.fenetre, text='')
-        self.msg.pack()
+        QuickTask.msg = Label(QuickTask.fenetre, text='')
+        QuickTask.msg.pack()
 
         ###Champ de projet
         Label(QuickTask.fenetre, text="Nom du projet :").pack()
         # Create a Tkinter variable
         QuickTask.project = StringVar(QuickTask.fenetre)
-        self.proj_choices = dict()
+        QuickTask.proj_choices = dict()
         #Récupération des types et insertion comme options
             # Attention : si deux projets ouverts ont le même intitulé,
             # seul le plus récent sera pris en compte
         projects = link.query("SELECT IDProj, Intitulé FROM projet WHERE IDStat = 1", []).fetchall()
         for elem in projects:
-            self.proj_choices[elem[1]] = elem[0]
+            QuickTask.proj_choices[elem[1]] = elem[0]
 
         QuickTask.project.set(project_name) # set the default option
-        OptionMenu(QuickTask.fenetre, QuickTask.project, *self.proj_choices).pack()
+        OptionMenu(QuickTask.fenetre, QuickTask.project, *QuickTask.proj_choices).pack()
 
         ###Champ de type
             # Create a Tkinter variable
         QuickTask.type_value = StringVar(QuickTask.fenetre)
-        self.ty_choices = dict()
+        QuickTask.ty_choices = dict()
             #Récupération des types et insertion comme options
         types = link.query("SELECT * FROM type ", []).fetchall()
         for elem in types:
-            self.ty_choices[elem[1]] = elem[0]
+            QuickTask.ty_choices[elem[1]] = elem[0]
 
         QuickTask.type_value.set("Sélectionner...") # set the default option
         Label(QuickTask.fenetre, text="Type de tâche :").pack()
-        OptionMenu(QuickTask.fenetre, QuickTask.type_value, *self.ty_choices).pack()
+        OptionMenu(QuickTask.fenetre, QuickTask.type_value, *QuickTask.ty_choices).pack()
 
         ###Champ de description
         Label(QuickTask.fenetre, text="Description :").pack()
@@ -72,8 +72,8 @@ class QuickTask:
 
         ###Minutes de décalage pour le bouton démarrer/arrêter
         Label(QuickTask.fenetre, text="Décalage : ").pack()
-        self.min_label = Label(QuickTask.fenetre, text="Tâche commencée il y a ")
-        self.min_label.pack()
+        QuickTask.min_label = Label(QuickTask.fenetre, text="Tâche commencée il y a ")
+        QuickTask.min_label.pack()
         QuickTask.input_min = Entry(QuickTask.fenetre)
         QuickTask.input_min.insert(0, 0)
         QuickTask.input_min.pack()
@@ -111,7 +111,7 @@ class QuickTask:
             QuickTask.heure_debut['state'] = DISABLED
             #Modification des labels
             QuickTask.start_stop['text'] = "Terminer"
-            self.min_label['text'] = "Tâche terminée il y a "
+            QuickTask.min_label['text'] = "Tâche terminée il y a "
             #On change le statut du bouton, on active l'annulation, on vide le champ décalage
             QuickTask.activate = not QuickTask.activate
             QuickTask.cancel['state'] = NORMAL
@@ -137,14 +137,14 @@ class QuickTask:
                     QuickTask.heure_fin['state'] = DISABLED
                     #Et les labels
                     QuickTask.start_stop['text'] = "Démarrer"
-                    self.min_label['text'] = "Tâche commencée il y a "
+                    QuickTask.min_label['text'] = "Tâche commencée il y a "
                     # appel à la fonction controleur enregistrant la tâche en BDD
                     controller = TasksCont()
                     controller.register(QuickTask.heure_debut.get(), QuickTask.heure_fin.get(),
                                         QuickTask.input_comm.get('1.0', 'end'),
-                                        self.proj_choices[QuickTask.project.get()],
+                                        QuickTask.proj_choices[QuickTask.project.get()],
                                         QuickTask.input_desc.get(),
-                                        self.ty_choices[QuickTask.type_value.get()])
+                                        QuickTask.ty_choices[QuickTask.type_value.get()])
                     #On change le statut du bouton et on vide les champs
                     QuickTask.activate = not QuickTask.activate
                     QuickTask.heure_debut['state'] = NORMAL
@@ -162,20 +162,20 @@ class QuickTask:
                     QuickTask.input_desc.delete(0, 'end')
 
                     #On affiche un message disant OK
-                    self.msg['text'] = "Tâche enregistrée"
+                    QuickTask.msg['text'] = "Tâche enregistrée"
                 else:
-                    self.msg['text'] = "L'heure de fin doit être supérieure ou égale à l'heure de début"
+                    QuickTask.msg['text'] = "L'heure de fin doit être supérieure ou égale à l'heure de début"
 
             else:
             #non ? on affiche un message et on valide rien du tout, namého
-                self.msg['text'] = "Tous les champs doivent êtres remplis pour enregistrer la tâche"
+                QuickTask.msg['text'] = "Tous les champs doivent êtres remplis pour enregistrer la tâche"
 
     def stop(self):
         """Annulation d'une tâche démarrée"""
 
         #Gestion des labels
         QuickTask.start_stop['text'] = "Démarrer"
-        self.min_label['text'] = "Tâche commencée il y a "
+        QuickTask.min_label['text'] = "Tâche commencée il y a "
         #On change le statut du bouton et on vide les champs
         QuickTask.activate = not QuickTask.activate
         QuickTask.heure_debut['state'] = NORMAL
@@ -185,4 +185,4 @@ class QuickTask:
         QuickTask.cancel['state'] = DISABLED
 
         #AFfichage du message
-        self.msg['text'] = "Enregistrement de la tâche annulé"
+        QuickTask.msg['text'] = "Enregistrement de la tâche annulé"

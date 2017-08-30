@@ -3,12 +3,14 @@
 
 import sys
 import os
+from tkinter.messagebox import *
 DOSSIER_COURRANT = os.path.dirname(os.path.abspath(__file__))
 DOSSIER_PARENT = os.path.dirname(DOSSIER_COURRANT)
 sys.path.append(DOSSIER_PARENT)
 from Controllers.Functions import Functions
 from DB.dbLink import DBLink as DB
 from Projects.Model import Project
+from Views.quickTask import QuickTask as QT
 
 
 class BrowseController:
@@ -65,14 +67,21 @@ class BrowseController:
 
         return proj_list
 
+    #def launch_quick_task(self, proj):
+    #    if QT.activate is True:
+    #        if askyesno("switchtask", "Cette action va terminer et enregistrer la tâche actuellement en cours. Continuer ?"):
+    #            QT.timer(QT)
+    #            QT.timer(QT)
+    #        else:
+    #            pass
+    #    else:
+    #        QT.project.set(proj)
+    #        QT.timer(QT)
+
+
 
 
 
 
 
 ############## TESTS #################
-
-test = BrowseController()
-liste = test.get_projects_search_results("ou")
-for elem in liste:
-    print(elem.nom)
