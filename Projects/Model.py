@@ -22,7 +22,7 @@ class Project:
             result = link.query(query, [self._id_proj, ])
 
             #On hydrate l'objet à partir des éléments récupérés en BDD
-            for bdd_nom, bdd_description, bdd_num_dossier, bdd_budget, bdd_client, bdd_statut, bdd_responsable, bdd_idclient in result:
+            for bdd_nom, bdd_description, bdd_num_dossier, bdd_budget, bdd_client, bdd_idclient, bdd_statut, bdd_responsable in result:
                 self.nom = bdd_nom
                 self.description = bdd_description
                 self.num_dossier = bdd_num_dossier
