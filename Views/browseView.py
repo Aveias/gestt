@@ -18,6 +18,7 @@ class BrowseView:
 
         self.ctrl = BrowseController()
         self.search_input = ""
+        self.fermer = False # passe à True quand on clique sur la croix de la fenetre
 
         #On lance la fenêtre par rapport à la fenêtre mère
         BrowseView.root = Toplevel(mother)
@@ -58,9 +59,15 @@ class BrowseView:
         self.pr_list.pack()
 
         Button(pr_tab, text="Voir le projet").pack()
+<<<<<<< HEAD
         Button(pr_tab, text="Démarrer une tâche rapide pour ce projet",
                command=self.launch_task).pack()
 
+=======
+        # Button(pr_tab, text="Démarrer une tâche rapide pour ce projet").pack()
+        BrowseView.startQT = Button(pr_tab, text="Démarrer une tâche rapide pour ce projet")
+        BrowseView.startQT.pack()
+>>>>>>> ede2e2c61b6fe96a13c87bdd4694e48a9919627b
 
         ##Tâches
         ta_tab = Frame(tabs)
